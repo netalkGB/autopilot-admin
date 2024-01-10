@@ -14,6 +14,10 @@ type SessionInfo = {
       iat: number,
       exp: number
     }
+  },
+  oAuth2Temp?: {
+    state: string,
+    codeVerifier: string
   }
 };
 
