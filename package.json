@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/jsrsasign": "^10.5.12",
     "@types/randomstring": "^1.1.11",
     "iron-session": "^8.0.1",
+    "jsrsasign": "^10.9.0",
     "next": "14.0.4",
     "randomstring": "^1.3.0",
     "react": "^18",
