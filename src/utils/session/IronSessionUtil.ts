@@ -1,26 +1,23 @@
-import {getIronSession, IronSession} from 'iron-session';
-import SessionInfo from "./SessionInfo";
-import {cookies} from "next/headers";
+import { getIronSession, type IronSession } from 'iron-session'
+import type SessionInfo from './SessionInfo'
+import { cookies } from 'next/headers'
 
-export class IronSessionUtil {
-  private constructor() {}
-
-  static async getIronSession(): Promise<IronSession<SessionInfo>> {
-    return new SessionHelper("ap-session", process.env.SESSION_PASSWORD, cookies).getSession();
-  }
+export async function getSession (): Promise<IronSession<SessionInfo>> {
+  return await new SessionHelper('ap-session', process.env.SESSION_PASSWORD, cookies()).getSession()
 }
 
 class SessionHelper {
-  private readonly password: string;
-  private readonly cookieName: string;
-  private readonly cookies: Function;
-  constructor(cookieName: string, password: string, cookies: Function) {
-    this.cookieName = cookieName;
-    this.password = password;
-    this.cookies = cookies;
+  private readonly password: string
+  private readonly cookieName: string
+  private readonly cookies: any // Type error occurs, but the solution is unclear, so using 'any' as a temporary workaround.
+  constructor (cookieName: string, password: string, cookies: any) { // Type error occurs, but the solution is unclear, so using 'any' as a temporary workaround.
+    this.cookieName = cookieName
+    this.password = password
+    this.cookies = cookies
   }
 
-  async getSession(): Promise<IronSession<SessionInfo>> {
-    return await getIronSession<SessionInfo>(this.cookies(), {cookieName: this.cookieName, password: this.password});
+  async getSession (): Promise<IronSession<SessionInfo>> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return await getIronSession<SessionInfo>(this.cookies, { cookieName: this.cookieName, password: this.password })
   }
 }

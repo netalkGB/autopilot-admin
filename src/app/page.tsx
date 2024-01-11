@@ -1,8 +1,8 @@
-import {IronSessionUtil} from "@/utils/session/IronSessionUtil";
+import { getSession } from '@/utils/session/IronSessionUtil'
 
-export default async function Home() {
-  const session = await IronSessionUtil.getIronSession();
-  const tokens = await session.tokens;
+export default async function Home (): Promise<React.ReactNode> {
+  const session = await getSession()
+  const tokens = session.tokens
 
   return (
     <div>
