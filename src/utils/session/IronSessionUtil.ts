@@ -3,7 +3,7 @@ import type SessionInfo from './SessionInfo'
 import { cookies } from 'next/headers'
 
 export async function getSession (): Promise<IronSession<SessionInfo>> {
-  return await new SessionHelper('ap-session', process.env.SESSION_PASSWORD, cookies()).getSession()
+  return await new SessionHelper('ap-session', process.env.SESSION_PASSWORD ?? '', cookies()).getSession()
 }
 
 class SessionHelper {

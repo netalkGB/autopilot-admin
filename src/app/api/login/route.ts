@@ -13,7 +13,7 @@ export async function GET (): Promise<NextResponse<{ message: string }>> {
     return NextResponse.json({ message: 'Already logged in.' })
   }
 
-  const clientId = process.env.AP_CLIENT_ID
+  const clientId = process.env.AP_CLIENT_ID ?? ''
   const state = randomstring.generate(10)
   const codeVerifier = randomstring.generate(80)
   const codeChallenge = crypto.createHash('sha256').update(codeVerifier).digest('base64').replace(/\//g, '_').replace(/\+/g, '-').replace(/=/g, '')
@@ -30,7 +30,7 @@ async function generateAuthorizationRequestUrl (clientId: string, state: string,
   const params = new URLSearchParams()
   params.append('response_type', 'code')
   params.append('client_id', clientId)
-  params.append('redirect_uri', process.env.AP_REDIRECT_URI)
+  params.append('redirect_uri', process.env.AP_REDIRECT_URI ?? '')
   params.append('scope', 'r w openid')
   params.append('state', state)
   params.append('code_challenge_method', 's256')
