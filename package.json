@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "next lint --fix"
   },
   "dependencies": {
     "iron-session": "^8.0.1",
@@ -17,13 +18,19 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@types/jsrsasign": "^10.5.12",
     "@types/node": "^20",
+    "@types/randomstring": "^1.1.11",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "eslint": "^8.56.0",
     "eslint-config-next": "14.0.4",
-    "typescript": "^5",
-    "@types/jsrsasign": "^10.5.12",
-    "@types/randomstring": "^1.1.11"
+    "eslint-config-standard-with-typescript": "^43.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.33.2",
+    "typescript": "^5.3.3"
   }
 }
