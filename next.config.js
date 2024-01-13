@@ -1,4 +1,11 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
-
-module.exports = nextConfig
+module.exports = {
+  async rewrites() {
+    return [
+      {
+        source: '/api/autopilot/:path*',
+        destination: process.env.AP_SERVER_URI + ':path*' // Proxy to Backend
+      },
+    ]
+  },
+}
