@@ -1,4 +1,5 @@
 import { getSession } from '@/utils/session/IronSessionUtil'
+import ApiTest from '@/app/ApiTest'
 
 // @ts-expect-error-next-line
 export default async function Home (): Promise<React.ReactNode> {
@@ -19,6 +20,7 @@ export default async function Home (): Promise<React.ReactNode> {
       <div>
         id token: {JSON.stringify(tokens?.idToken)}
       </div>
+      <ApiTest />
     </div>
   )
 }
