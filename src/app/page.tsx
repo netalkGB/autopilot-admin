@@ -3,24 +3,35 @@ import ApiTest from '@/app/ApiTest'
 
 // @ts-expect-error-next-line
 export default async function Home (): Promise<React.ReactNode> {
-  const session = await getSession()
-  const tokens = session.tokens
-
-  return (
-    <div>
-      <h1>
-        test
-      </h1>
-      <h2>
-        session
-      </h2>
+  const displaySession = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
+  if (displaySession) {
+    const session = await getSession()
+    const tokens = session.tokens
+    return (
       <div>
-        token: {JSON.stringify(tokens?.token)}
+        <h1>
+          test
+        </h1>
+        <h2>
+          session
+        </h2>
+        <div>
+          token: {JSON.stringify(tokens?.token)}
+        </div>
+        <div>
+          id token: {JSON.stringify(tokens?.idToken)}
+        </div>
+        <ApiTest />
       </div>
+    )
+  } else {
+    return (
       <div>
-        id token: {JSON.stringify(tokens?.idToken)}
+        <h1>
+          test
+        </h1>
+        <ApiTest />
       </div>
-      <ApiTest />
-    </div>
-  )
+    )
+  }
 }
