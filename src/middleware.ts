@@ -5,10 +5,13 @@ export async function middleware (req: NextRequest): Promise<NextResponse> {
   const { pathname } = req.nextUrl
   if (pathname.startsWith('/api/autopilot/')) {
     const session = await getSession()
-    const nextResponse = NextResponse.next()
-    nextResponse.headers.set('Authorization', `Bearer ${session.tokens?.token?.accessToken}`)
-    return nextResponse
+    const headers = new Headers(req.headers)
+    headers.set('Authorization', `Bearer ${session.tokens?.token?.accessToken}`)
+    return NextResponse.next({
+      request: {
+        headers
+      }
+    })
   }
-
   return NextResponse.next()
 }
