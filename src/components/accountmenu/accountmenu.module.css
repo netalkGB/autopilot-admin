@@ -1,0 +1,78 @@
+.userDisplayArea {
+    width: var(--user-display-area-width);
+    height: var(--header-height);
+    user-select: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    border-left: 2px solid var(--separator-color);
+}
+
+.accountInfo {
+    height: 100%;
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.accountName {
+    width: 100%;
+    text-align: center;
+}
+
+.downIcon {
+    color: var(--strong-blue-green);
+}
+
+.accountPullDownMenu {
+    position: absolute;
+    top: var(--header-height);
+    right: 0;
+    width: var(--user-display-area-width);
+    border: 1px solid var(--separator-color);
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menuItem {
+    height: 50px;
+    width: var(--user-display-area-width);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menuItem:hover {
+    background-color: #dddddd;
+}
+
+.menuItemIconArea {
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menuItemIconArea > div {
+    padding: 12px; /* workaround */
+}
+
+.menuItemText {
+    width: calc(var(--user-display-area-width) - 40px);
+}

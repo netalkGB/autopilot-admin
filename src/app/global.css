@@ -1,0 +1,202 @@
+:root {
+    --header-height: 65px;
+    --content-menu-width: 225px;
+    --user-display-area-width: 180px;
+    --gray-background-color: #fafafa;
+    --strong-blue-green: #0a8086;
+    --separator-color: #eeeeee;
+    --strong-separator-color: #cfcfcf;
+    --success-color: #00bb00;
+    --failed-color: #bb0000;
+    --disabled: #bbbbbb;
+}
+
+::-webkit-scrollbar{
+    width: 8px;
+}
+::-webkit-scrollbar-track{
+    background-color: #efefef;
+}
+::-webkit-scrollbar-thumb{
+    background-color: #bbbbbb;
+}
+
+html {
+    overflow: hidden;
+    font-size: 14px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--strong-separator-color);
+}
+
+a {
+    color: var(--strong-blue-green);
+    text-decoration: none;
+}
+
+a:hover {
+    filter: brightness(120%);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-block-end: 0.5em;
+}
+
+p {
+    line-height: 24px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+}
+
+th {
+    background-color: var(--gray-background-color);
+    color: #555555;
+    border-bottom: 1px solid var(--strong-separator-color);
+}
+
+td {
+    border-bottom: 1px solid var(--strong-separator-color);
+}
+
+button, input[type="submit"], input[type="button"], input[type="reset"] {
+    color: white;
+    background-color: var(--strong-blue-green);
+    border: none;
+    border-radius: 5px;
+    padding: 8px;
+    margin: 1px;
+}
+button:hover, input[type="submit"]:hover, input[type="button"]:hover, input[type="reset"]:hover {
+    filter: brightness(120%);
+}
+
+button:focus, input[type="submit"]:focus, input[type="button"]:focus, input[type="reset"]:focus {
+    outline: 0 solid var(--strong-blue-green);
+}
+
+button:active, input[type="submit"]:active, input[type="button"]:active, input[type="reset"]:active {
+    transform: scale(0.97);
+}
+
+button:disabled, input[type="submit"]:disabled, input[type="button"]:disabled, input[type="reset"]:disabled {
+    background-color: var(--disabled);
+    filter: brightness(100%);
+    transform: scale(1);
+    border: none;
+    color: white;
+}
+
+input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="date"], input[type="time"], input[type="datetime-local"], input[type="search"], input[type="tel"], input[type="url"], textarea {
+    border: 1px solid var(--strong-separator-color);
+    border-radius: 5px;
+    padding: 8px;
+    margin: 1px;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="number"]:focus, input[type="date"]:focus, input[type="time"]:focus, input[type="datetime-local"]:focus, input[type="search"]:focus, input[type="tel"]:focus, input[type="url"]:focus, textarea:focus {
+    outline: 0 solid var(--strong-blue-green);
+}
+
+select {
+    border: 1px solid var(--strong-separator-color);
+    border-radius: 5px;
+    padding: 8px;
+    margin: 1px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+}
+
+select:focus {
+    outline: 0 solid var(--strong-blue-green);
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + label {
+    box-sizing: border-box;
+    cursor: pointer;
+    padding-left: 25px;
+    position: relative;
+    width: auto;
+    user-select: none;
+}
+
+input[type="checkbox"] + label::before {
+    background-color: #ffffff;
+    border: 1px solid var(--strong-separator-color);
+    border-radius: 5px;
+    content: "";
+    display: inline-block;
+    height: 20px;
+    left: 0;
+    margin-right: 10px;
+    position: absolute;
+    top: 0;
+    width: 20px;
+}
+
+input[type="checkbox"]:checked + label::before {
+    background-color: var(--strong-blue-green);
+    border: 1px solid var(--strong-blue-green);
+    color: #ffffff;
+    content: "✔";
+    line-height: 20px;
+    text-align: center;
+}
+
+input[type="checkbox"]:disabled + label::before {
+    background-color: var(--disabled);
+    border: 1px solid var(--disabled);
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+input[type="radio"] + label {
+    box-sizing: border-box;
+    cursor: pointer;
+    padding-left: 25px;
+    position: relative;
+    width: auto;
+    user-select: none;
+}
+
+input[type="radio"] + label::before {
+    background-color: #ffffff;
+    border: 1px solid var(--strong-separator-color);
+    border-radius: 50%;
+    content: "";
+    display: inline-block;
+    height: 20px;
+    left: 0;
+    margin-right: 10px;
+    position: absolute;
+    top: 0;
+    width: 20px;
+}
+
+input[type="radio"]:checked + label::before {
+    background-color: var(--strong-blue-green);
+    border: 1px solid var(--strong-blue-green);
+    color: #ffffff;
+    content: "・";
+    line-height: 20px;
+    text-align: center;
+}
+
+input[type="radio"]:disabled + label::before {
+    background-color: var(--disabled);
+    border: 1px solid var(--disabled);
+}

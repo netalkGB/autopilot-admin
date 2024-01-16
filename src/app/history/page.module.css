@@ -1,0 +1,53 @@
+.historyList {
+  padding-top: 8px;
+}
+
+.historyTableContainer {
+  width: 100%;
+}
+
+.historyListAction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.historyList  ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+}
+
+.historyList  ul  li {
+  margin-right: 8px;
+}
+
+.historyTable {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.historyTable th:nth-child(1), .historyTable td:nth-child(1) {
+  min-width: 125px;
+}
+
+.historyTable th:nth-child(2), .historyTable td:nth-child(2) {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.historyTable th:nth-child(3), .historyTable td:nth-child(3) {
+  min-width: 100px;
+  text-align: center;
+}
+
+.failed {
+  color: var(--failed-color);
+}
+
+.success {
+  color: var(--success-color);
+}
