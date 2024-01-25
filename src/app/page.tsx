@@ -66,7 +66,7 @@ export default function Home (): React.ReactNode {
 
     for (const schedule of schedules) {
       const history = reverseHistories.find((history) => history.scheduleId === schedule.id)
-      if (history === undefined) return
+      if (history === undefined) continue
       const status: Status = {
         name: schedule.name,
         date: history?.date,
