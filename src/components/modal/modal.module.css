@@ -1,0 +1,29 @@
+.modal {
+    background-color: #ffffff;
+    min-width: 500px;
+    padding: 10px;
+}
+
+.titleArea {
+    display: flex;
+    align-items: center;
+}
+
+.titleDispArea {
+    width: calc(100% - 20px);
+}
+
+.modalControlArea {
+    width: 20px;
+    text-align: right;
+    color: #777777;
+}
+
+.contentArea {
+    padding-top: 8px;
+    height: 100%;
+}
+
+.button {
+    cursor: pointer;
+}

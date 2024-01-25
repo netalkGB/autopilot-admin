@@ -1,0 +1,26 @@
+.dialog {
+    width: 280px;
+    text-align: center;
+    padding: 8px;
+    background-color: rgba(255, 255, 255, 1.0);
+}
+
+.message {
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.buttonAreaContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.buttonArea {
+    display: flex;
+    justify-content: center;
+}
+.buttonArea > div:nth-child(1) {
+    margin-right: 2px;
+}

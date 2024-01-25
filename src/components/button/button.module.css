@@ -1,0 +1,39 @@
+.common {
+    cursor: pointer;
+}
+
+.normal {}
+
+.danger {
+    background-color: #e0245e;
+    border: 1px solid #e0245e;
+    color: #ffffff;
+}
+
+.success {
+    background-color: #29b01b;
+    border: 1px solid #29b01b;
+    color: #ffffff;
+}
+
+.warning {
+    background-color: #ff5e00;
+    border: 1px solid #ff5e00;
+    color: #ffffff;
+}
+
+.info {
+    background-color: #ffffff;
+    border: 1px solid var(--strong-separator-color);;
+    color: #333333;
+}
+
+.info:hover {
+    background-color: #eeeeee;
+    filter: brightness(100%);
+}
+
+.info:disabled {
+    background-color: var(--disabled);
+    filter: brightness(100%);
+}

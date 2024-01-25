@@ -1,0 +1,38 @@
+.header {
+    height: var(--header-height);
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.headerContainer {
+    height: 100%;
+    width: calc(100% - 60px);
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.headerContainer :last-child {
+    margin-left: auto;
+}
+
+
+
+.centeringVertical {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 70%;
+    width: 100%;
+    user-select: none;
+}
+
+.logoWrapper {
+    cursor: pointer;
+}
