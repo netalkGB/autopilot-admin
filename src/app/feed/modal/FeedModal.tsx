@@ -1,23 +1,23 @@
-import type Feed from '@/app/feed/Feed'
+import type { Schedule } from '@/app/types/Schedule'
 import Button from '@/components/button/Button'
 import { type ForwardedRef, forwardRef, useImperativeHandle, useRef } from 'react'
 import styles from './feedmodal.module.css'
 
 export interface FeedModalChildComponentMethods {
-  getForm: () => Feed | null
+  getForm: () => Schedule | null
 }
 
 export interface FeedModalProps {
-  activeFeed: Feed | null
-  onOk: (feed: Feed | null) => void
-  onCancel: (feed: Feed | null) => void
+  activeFeed: Schedule | null
+  onOk: (feed: Schedule | null) => void
+  onCancel: (feed: Schedule | null) => void
 }
 
 const FeedModal = forwardRef(({ activeFeed, onOk, onCancel }: FeedModalProps, ref: ForwardedRef<FeedModalChildComponentMethods>) => {
   const nameRef = useRef<HTMLInputElement>(null)
   const urlRef = useRef<HTMLInputElement>(null)
   const scheduleRef = useRef<HTMLSelectElement>(null)
-  function createFeed (): Feed | null {
+  function createFeed (): Schedule | null {
     return {
       id: activeFeed?.id,
       name: nameRef.current?.value ?? '',

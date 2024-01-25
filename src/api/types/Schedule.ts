@@ -1,4 +1,4 @@
-export default interface Schedule {
+export interface Schedule {
   id: string
   url: string
   name: string

@@ -12,7 +12,7 @@ import Loading from '@/components/modal/Loading'
 import { useEffect, useRef, useState } from 'react'
 import type History from '@/app/types/History'
 import type { History as History2 } from '@/api/types/History'
-import type Schedule from '@/api/types/Schedule'
+import type { Schedule } from '@/api/types/Schedule'
 
 export default function Page (): React.ReactNode {
   const apiErrorDialogRef = useRef<MessageDialogChildComponentMethods>(null)

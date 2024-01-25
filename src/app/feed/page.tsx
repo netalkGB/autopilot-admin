@@ -6,51 +6,63 @@ import PlusIcon from '@/components/icon/PlusIcon'
 import styles from './page.module.css'
 import XIcon from '@/components/icon/XIcon'
 import RotateIcon from '@/components/icon/RotateIcon'
-import { useRef } from 'react'
-import type Feed from '@/app/feed/Feed'
+import { useEffect, useRef, useState } from 'react'
 import FeedModalContainer, { type FeedModalContainerChildComponentMethods } from '@/app/feed/modal/FeedModalContainer'
-
-const feeds: Feed[] = [
-  {
-    id: '1',
-    name: 'test1',
-    url: 'https://note.com/shirahota/rss',
-    schedule: 'every30minutes'
-  },
-  {
-    id: '2',
-    name: 'test2',
-    url: 'https://note.com/netalkgb/rss',
-    schedule: 'every30minutes'
-  },
-  {
-    id: '3',
-    name: 'test3',
-    url: 'https://note.com/shirahota/rss',
-    schedule: 'every30minutes'
-  },
-  {
-    id: '4',
-    name: 'test4',
-    url: 'https://note.com/netalkgb/rss',
-    schedule: 'every1hour'
-  },
-  {
-    id: '5',
-    name: 'test5',
-    url: 'https://note.com/shirahota/rss',
-    schedule: 'every1hour'
-  },
-  {
-    id: '6',
-    name: 'test6',
-    url: 'https://note.com/netalkgb/rss',
-    schedule: 'every1hour'
-  }
-]
+import MessageDialog, {
+  type MessageDialogButton,
+  type MessageDialogChildComponentMethods
+} from '@/components/modal/MessageDialog'
+import Loading from '@/components/modal/Loading'
+import type { Schedule } from '@/api/types/Schedule'
+import type { Schedule as ScheduleUi } from '@/app/types/Schedule'
 
 export default function Page (): React.ReactNode {
   const modalRef = useRef<FeedModalContainerChildComponentMethods>(null)
+  const apiErrorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
+  const errorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
+  const loadingRef = useRef<MessageDialogChildComponentMethods>(null)
+
+  const [schedules, setSchedules] = useState<ScheduleUi[]>([])
+
+  async function init (): Promise<void> {
+    loadingRef.current?.open()
+    const extendResponse = await fetch('/api/extend', {
+      method: 'POST',
+      headers: {}
+    })
+    if (extendResponse.status === 401) {
+      location.href = '/api/login'
+      return
+    }
+    if (!extendResponse.ok) {
+      throw new Error('API error')
+    }
+    const scheduleResponse = await fetch('/api/autopilot/schedule', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    if (!scheduleResponse.ok) {
+      throw new Error('API error')
+    }
+    const uiSchedules = (await scheduleResponse.json() as Schedule[]).map((schedule) => ({
+      id: schedule.id,
+      name: schedule.name,
+      url: schedule.url,
+      schedule: schedule.schedule
+    }))
+    setSchedules(uiSchedules)
+  }
+
+  useEffect(() => {
+    init().then(() => {
+      loadingRef.current?.close()
+    }).catch((e) => {
+      loadingRef.current?.close()
+      errorDialogRef.current?.open()
+    })
+  }, [])
 
   return (
     <>
@@ -60,11 +72,21 @@ export default function Page (): React.ReactNode {
         <div className={styles.feedListAction}>
           <div>
             <ul>
-              <li><a href='#'><RotateIcon width={'14px'} height={'14px'}/>Reload</a></li>
               <li><a href='#' onClick={
                 (e: React.MouseEvent<HTMLAnchorElement>) => {
                   e.preventDefault()
-                  modalRef.current?.open({ title: 'New Feed', feed: null })
+                  init().then(() => {
+                    loadingRef.current?.close()
+                  }).catch((e) => {
+                    loadingRef.current?.close()
+                    errorDialogRef.current?.open()
+                  })
+                }
+              }><RotateIcon width={'14px'} height={'14px'}/>Reload</a></li>
+              <li><a href='#' onClick={
+                (e: React.MouseEvent<HTMLAnchorElement>) => {
+                  e.preventDefault()
+                  modalRef.current?.open({ title: 'New Schedule', feed: null })
                 }
               }><PlusIcon width={'14px'} height={'14px'}/>Add</a></li>
             </ul>
@@ -82,7 +104,7 @@ export default function Page (): React.ReactNode {
             </thead>
             <tbody>
             {
-              feeds.map((feed, index) => {
+              schedules.map((feed, index) => {
                 return (
                   <tr key={index}>
                     <td><a href='#' onClick={onOpenDialog}>{feed.name}</a></td>
@@ -93,7 +115,7 @@ export default function Page (): React.ReactNode {
                 )
                 function onOpenDialog (e: React.MouseEvent<HTMLAnchorElement>): void {
                   e.preventDefault()
-                  modalRef.current?.open({ title: 'Edit Feed', feed })
+                  modalRef.current?.open({ title: 'Edit Schedule', feed })
                 }
               })
             }
@@ -102,6 +124,16 @@ export default function Page (): React.ReactNode {
         </div>
       </div>
       <FeedModalContainer onClose={ (data) => { console.log(data); modalRef.current?.close() } } onOk={ (data) => { console.log(data); modalRef.current?.close() } } onCancel={ (data) => { console.log(data); modalRef.current?.close() } } ref={modalRef} />
+
+      <MessageDialog ref={apiErrorDialogRef} message={'API error'} type={'alert'}
+                     onButtonClick={(button: MessageDialogButton) => {
+                       apiErrorDialogRef.current?.close()
+                     }}/>
+      <MessageDialog ref={errorDialogRef} message={'Error'} type={'alert'}
+                     onButtonClick={(button: MessageDialogButton) => {
+                       errorDialogRef.current?.close()
+                     }}/>
+      <Loading ref={loadingRef}/>
     </>
   )
 }

@@ -9,7 +9,7 @@ import MessageDialog, {
   type MessageDialogButton,
   type MessageDialogChildComponentMethods
 } from '@/components/modal/MessageDialog'
-import type Schedule from '@/api/types/Schedule'
+import type { Schedule } from '@/api/types/Schedule'
 import Loading from '@/components/modal/Loading'
 import type { History } from '@/api/types/History'
 import type Status from '@/app/types/Status'
