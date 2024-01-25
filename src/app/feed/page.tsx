@@ -18,7 +18,6 @@ import type { Schedule as ScheduleUi } from '@/app/types/Schedule'
 
 export default function Page (): React.ReactNode {
   const modalRef = useRef<FeedModalContainerChildComponentMethods>(null)
-  const apiErrorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
   const errorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
   const loadingRef = useRef<MessageDialogChildComponentMethods>(null)
 
@@ -125,10 +124,6 @@ export default function Page (): React.ReactNode {
       </div>
       <FeedModalContainer onClose={ (data) => { console.log(data); modalRef.current?.close() } } onOk={ (data) => { console.log(data); modalRef.current?.close() } } onCancel={ (data) => { console.log(data); modalRef.current?.close() } } ref={modalRef} />
 
-      <MessageDialog ref={apiErrorDialogRef} message={'API error'} type={'alert'}
-                     onButtonClick={(button: MessageDialogButton) => {
-                       apiErrorDialogRef.current?.close()
-                     }}/>
       <MessageDialog ref={errorDialogRef} message={'Error'} type={'alert'}
                      onButtonClick={(button: MessageDialogButton) => {
                        errorDialogRef.current?.close()

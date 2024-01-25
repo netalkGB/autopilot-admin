@@ -14,7 +14,6 @@ import { type DiscordConfig } from '@/api/types/DiscordConfig'
 import { type DiscordConfig as DiscordConfig2 } from '@/app/types/DiscordConfig'
 
 export default function Page (): React.ReactNode {
-  const apiErrorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
   const errorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
   const loadingRef = useRef<MessageDialogChildComponentMethods>(null)
 
@@ -71,10 +70,6 @@ export default function Page (): React.ReactNode {
           <DiscordWebhookConfig configured={discordConfig?.configured ?? false} onOk={(webhookUrl: string) => { console.log(webhookUrl) }}/>
         </div>
       </div>
-      <MessageDialog ref={apiErrorDialogRef} message={'API error'} type={'alert'}
-                     onButtonClick={(button: MessageDialogButton) => {
-                       apiErrorDialogRef.current?.close()
-                     }}/>
       <MessageDialog ref={errorDialogRef} message={'Error'} type={'alert'}
                      onButtonClick={(button: MessageDialogButton) => {
                        errorDialogRef.current?.close()

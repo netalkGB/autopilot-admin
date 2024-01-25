@@ -15,7 +15,6 @@ import type { History as History2 } from '@/api/types/History'
 import type { Schedule } from '@/api/types/Schedule'
 
 export default function Page (): React.ReactNode {
-  const apiErrorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
   const errorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
   const loadingRef = useRef<MessageDialogChildComponentMethods>(null)
 
@@ -134,10 +133,6 @@ export default function Page (): React.ReactNode {
           </table>
         </div>
       </div>
-      <MessageDialog ref={apiErrorDialogRef} message={'API error'} type={'alert'}
-                     onButtonClick={(button: MessageDialogButton) => {
-                       apiErrorDialogRef.current?.close()
-                     }}/>
       <MessageDialog ref={errorDialogRef} message={'Error'} type={'alert'}
                      onButtonClick={(button: MessageDialogButton) => {
                        errorDialogRef.current?.close()
