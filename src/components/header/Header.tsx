@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 
 interface HeaderProps {
   imgSrc: string
-  userName: string
+  userName: React.ReactNode
   menuItems: AccountMenuItem[]
 }
 

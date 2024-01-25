@@ -10,7 +10,7 @@ export interface AccountMenuItem {
 }
 
 interface AccountMenuProps {
-  userName: string
+  userName: React.ReactNode
   items: AccountMenuItem[]
 }
 
