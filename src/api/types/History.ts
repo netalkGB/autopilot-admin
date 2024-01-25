@@ -1,4 +1,4 @@
-export default interface History {
+export interface History {
   id: string
   scheduleId: string
   date: Date
