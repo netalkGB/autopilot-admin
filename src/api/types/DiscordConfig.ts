@@ -1,3 +1,3 @@
 export interface DiscordConfig {
-  configured: boolean
+  discordWebHookUrl: string
 }
