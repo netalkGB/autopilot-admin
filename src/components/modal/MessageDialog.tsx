@@ -1,8 +1,8 @@
-import BaseModal from '@/components/modal/BaseModal'
 import styles from '@/components/modal/dialog.module.css'
 import baseStyles from '@/components/modal/basemodal.module.css'
 import Button from '@/components/button/Button'
 import React, { type ForwardedRef, forwardRef, useImperativeHandle } from 'react'
+import BaseDialog from '@/components/modal/BaseDialog'
 
 export type MessageDialogType = 'confirm' | 'alert'
 
@@ -39,7 +39,7 @@ const MessageDialog = forwardRef((props: MessageDialogProps, ref: ForwardedRef<M
 function MessageDialogComponent ({ message, type = 'alert', onButtonClick }: MessageDialogProps): React.ReactNode {
   return (
     <div>
-      <BaseModal onClickOutside={() => {}}>
+      <BaseDialog onClickOutside={() => {}}>
         <div className={`${styles.dialog} ${baseStyles.corner}`}>
           <div className={styles.message}>
             {message}
@@ -48,7 +48,7 @@ function MessageDialogComponent ({ message, type = 'alert', onButtonClick }: Mes
             {createButtonArea(type)}
           </div>
         </div>
-      </BaseModal>
+      </BaseDialog>
     </div>
   )
 

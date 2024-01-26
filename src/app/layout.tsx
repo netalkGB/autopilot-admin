@@ -11,6 +11,7 @@ import type { AccountMenuItem } from '@/components/accountmenu/AccountMenu'
 import LogoutIcon from '@/components/icon/LogoutIcon'
 import Main from '@/components/main/Main'
 import { UserName } from '@/app/UserName'
+import BaseDialog from '@/components/modal/BaseDialog'
 
 export const metadata: Metadata = {
   title: 'Autopilot',
@@ -65,6 +66,7 @@ export default function RootLayout ({
       <Main appIconSrc={'/o.png'} userName={<UserName />} accountMenuItems={accountMenuItems} menuItems={menuItems} content={children} />
       <ModalPortal>
         <BaseModal />
+        <BaseDialog />
       </ModalPortal>
       </body>
     </html>

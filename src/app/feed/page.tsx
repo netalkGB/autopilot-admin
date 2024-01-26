@@ -147,7 +147,6 @@ export default function Page (): React.ReactNode {
     }
     modalRef.current?.close()
   }
-
 }
 
 function checkUpdate (org: ScheduleUi | null, updated: ScheduleUi | null): boolean {
