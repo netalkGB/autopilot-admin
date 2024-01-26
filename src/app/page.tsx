@@ -2,19 +2,93 @@
 
 import 'modern-normalize'
 import './global.css'
-import { useRef } from 'react'
-import MessageDialog, { type MessageDialogChildComponentMethods, type MessageDialogButton } from '@/components/modal/MessageDialog'
-import PlusIcon from '@/components/icon/PlusIcon'
-import Button from '@/components/button/Button'
-import XIcon from '@/components/icon/XIcon'
-import CheckIcon from '@/components/icon/CheckIcon'
-import EditIcon from '@/components/icon/EditIcon'
-import Modal, { type ModalChildComponentMethods } from '@/components/modal/Modal'
-import Loading from '@/components/modal/Loading'
 import styles from './index.module.css'
 import RotateIcon from '@/components/icon/RotateIcon'
+import { useEffect, useRef, useState } from 'react'
+import MessageDialog, {
+  type MessageDialogButton,
+  type MessageDialogChildComponentMethods
+} from '@/components/modal/MessageDialog'
+import type { Schedule } from '@/api/types/Schedule'
+import Loading from '@/components/modal/Loading'
+import type { History as History2, History } from '@/api/types/History'
+import type Status from '@/app/types/Status'
 
 export default function Home (): React.ReactNode {
+  const apiErrorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
+  const errorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
+  const loadingRef = useRef<MessageDialogChildComponentMethods>(null)
+
+  const [statuses, setStatuses] = useState<Status[]>([])
+
+  async function init (): Promise<void> {
+    setStatuses([])
+
+    loadingRef.current?.open()
+    const extendResponse = await fetch('/api/extend', {
+      method: 'POST',
+      headers: {}
+    })
+    if (extendResponse.status === 401) {
+      location.href = '/api/login'
+      return
+    }
+    if (!extendResponse.ok) {
+      throw new Error('API error')
+    }
+
+    const [scheduleResponse, historyResponse] = await Promise.all([
+      fetch('/api/autopilot/schedule', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }),
+      fetch('/api/autopilot/history', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+    ])
+    if (!scheduleResponse.ok) {
+      throw new Error('API error')
+    }
+    if (!historyResponse.ok) {
+      throw new Error('API error')
+    }
+    const schedules = await scheduleResponse.json() as Schedule[]
+    const histories = (await historyResponse.json() as History[]).map((h: History2) => ({
+      ...h,
+      date: new Date(h.date)
+    }))
+
+    const sortedHistories = histories.sort((a: History2, b: History2) => b.date.getTime() - a.date.getTime())
+
+    let statuses: Status[] = []
+
+    for (const schedule of schedules) {
+      const history = sortedHistories.find((history) => history.scheduleId === schedule.id)
+      if (history === undefined) continue
+      const status: Status = {
+        name: schedule.name,
+        date: history?.date,
+        result: history?.result
+      }
+      statuses = [...statuses, status]
+    }
+    setStatuses(statuses)
+  }
+
+  useEffect(() => {
+    init().then(() => {
+      loadingRef.current?.close()
+    }).catch((e) => {
+      loadingRef.current?.close()
+      errorDialogRef.current?.open()
+    })
+  }, [])
+
   return (
     <>
        <h2>Home</h2>
@@ -27,7 +101,15 @@ export default function Home (): React.ReactNode {
           <div className={styles.historyListAction}>
             <div>
               <ul>
-                <li><a href='#'><RotateIcon width={'14px'} height={'14px'}/>Reload</a></li>
+                <li><a href='#' onClick={(e: React.MouseEvent<HTMLAnchorElement>): void => {
+                  e.preventDefault()
+                  init().then(() => {
+                    loadingRef.current?.close()
+                  }).catch((e) => {
+                    loadingRef.current?.close()
+                    errorDialogRef.current?.open()
+                  })
+                }}><RotateIcon width={'14px'} height={'14px'}/>Reload</a></li>
               </ul>
             </div>
           </div>
@@ -41,144 +123,29 @@ export default function Home (): React.ReactNode {
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <td>test</td>
-              <td>2024-01-23T17:00:00.808Z</td>
-              <td><span className={styles.failed}>Failed</span></td>
-            </tr>
-            <tr>
-              <td>test</td>
-              <td>2024-01-23T17:00:00.808Z</td>
-              <td><span className={styles.success}>Success</span></td>
-            </tr>
-            <tr>
-              <td>test</td>
-              <td>2024-01-23T17:00:00.808Z</td>
-              <td><span className={styles.success}>Success</span></td>
-            </tr>
-            <tr>
-              <td>test</td>
-              <td>2024-01-23T17:00:00.808Z</td>
-              <td><span className={styles.success}>Success</span></td>
-            </tr>
-            <tr>
-              <td>test</td>
-              <td>2024-01-23T17:00:00.808Z</td>
-              <td><span className={styles.success}>Success</span></td>
-            </tr>
-            <tr>
-              <td>test</td>
-              <td>2024-01-23T17:00:00.808Z</td>
-              <td><span className={styles.success}>Success</span></td>
-            </tr>
+            {statuses.map((status: Status, index: number) => {
+              return (
+                <tr key={index}>
+                  <td>{status.name}</td>
+                  <td>{status.date.toISOString()}</td>
+                  <td>{status.result === 'success'
+                    ? <span className={styles.success}>Success</span>
+                    : <span className={styles.failed}>Failed</span>}</td>
+                </tr>
+              )
+            })}
             </tbody>
           </table>
         </div>
       </div>
-    </>
-  )
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function ContentChild (): React.ReactNode {
-  const messageDialogRef = useRef<MessageDialogChildComponentMethods>(null)
-  const messageDialogRef2 = useRef<MessageDialogChildComponentMethods>(null)
-  const modalRef = useRef<ModalChildComponentMethods>(null)
-  const loadingRef = useRef<MessageDialogChildComponentMethods>(null)
-  return (
-    <>
-      <h2>Title</h2>
-      <hr/>
-      <h3>Title</h3>
-      <hr/>
-      <h4>Title</h4>
-      <hr/>
-      <h5>Title</h5>
-      <hr/>
-      <h6>Title</h6>
-      <hr/>
-      <p>test<br/><a href='#'>Link</a></p>
-      <a href='#'><PlusIcon/>Add</a>
-
-      <table>
-        <thead>
-        <tr>
-          <th>Column1</th>
-          <th>Column2</th>
-          <th>Column3</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>test</td>
-          <td>test</td>
-          <td>test</td>
-        </tr>
-        <tr>
-          <td>test</td>
-          <td>test</td>
-          <td>test</td>
-        </tr>
-        </tbody>
-      </table>
-      <p>
-        <button>Button</button>
-        <input type='button' value={'test'}/>
-      </p>
-      <p>
-        <label htmlFor={'label'}>label:</label>
-        <input id={'label'} type='text' placeholder={'textbox1'}/>
-      </p>
-      <Button mode={'normal'} label={'normal'} onClick={() => {
-        messageDialogRef.current?.open()
-      }}/>
-      <Button mode={'danger'} label={'danger'} onClick={() => {
-        messageDialogRef2.current?.open()
-      }}/>
-      <Button mode={'success'} label={'success'} onClick={() => {
-        modalRef.current?.open()
-      }}/>
-      <Button mode={'warning'} label={'warning'} onClick={() => {
-        loadingRef.current?.open()
-      }}/>
-      <Button mode={'info'} label={'info'}/>
-      <p>
-        <label htmlFor={'select'}>select:</label>
-        <select id={'select'}>
-          <option value={'option1'}>option1</option>
-          <option value={'option2'}>option2</option>
-          <option value={'option3'}>option3</option>
-        </select>
-      </p>
-      <p>
-        <Button mode={'info'} label={<XIcon height={'12px'} width={'12px'}/>}/>
-        <Button mode={'info'} label={<CheckIcon height={'12px'} width={'12px'}/>}/>
-        <a href={'#'}><EditIcon/>&nbsp;Edit</a>
-      </p>
-      <p>
-        <input type={'checkbox'} id={'checkbox1'}/>
-        <label htmlFor={'checkbox1'}>checkbox1</label>
-      </p>
-      <p>
-        <input type={'radio'} id={'radio1'} name={'radio'}/>
-        <label htmlFor={'radio1'}>radio1</label>
-        <input type={'radio'} id={'radio2'} name={'radio'}/>
-        <label htmlFor={'radio2'}>radio2</label>
-      </p>
-      <MessageDialog ref={messageDialogRef} message={'test'} type={'alert'}
+      <MessageDialog ref={apiErrorDialogRef} message={'API error'} type={'alert'}
                      onButtonClick={(button: MessageDialogButton) => {
-                       console.log(button)
-                       messageDialogRef.current?.close()
+                       apiErrorDialogRef.current?.close()
                      }}/>
-      <MessageDialog ref={messageDialogRef2} message={'test'} type={'confirm'}
+      <MessageDialog ref={errorDialogRef} message={'Error'} type={'alert'}
                      onButtonClick={(button: MessageDialogButton) => {
-                       console.log(button)
-                       messageDialogRef2.current?.close()
+                       errorDialogRef.current?.close()
                      }}/>
-      <Modal ref={modalRef} onClose={() => {
-        console.log('modal')
-        modalRef.current?.close()
-      }} title={'test'}>test</Modal>
       <Loading ref={loadingRef}/>
     </>
   )

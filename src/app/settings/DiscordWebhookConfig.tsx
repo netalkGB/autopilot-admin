@@ -14,7 +14,7 @@ interface DiscordWebhookConfigProps {
 export default function DiscordWebhookConfig ({ configured, onOk }: DiscordWebhookConfigProps): React.ReactNode {
   const [editing, setEditing] = useState(false)
   const [webhookUrl, setWebhookUrl] = useState('')
-
+  const [enabled, setEnabled] = useState(false)
   return (
     <>
       <label htmlFor={'webhook'}>Webhook URL:&nbsp;</label>
@@ -23,9 +23,12 @@ export default function DiscordWebhookConfig ({ configured, onOk }: DiscordWebho
           if (editing) {
             return (
               <>
-                <input id={'label'} type='text' placeholder={'Webhook URL'} onInput={(e: React.ChangeEvent<HTMLInputElement>) => { setWebhookUrl(e.target.value) }}/>
+                <input id={'label'} type='text' placeholder={'Webhook URL'} onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setWebhookUrl(e.target.value)
+                  setEnabled(e.target.value.length > 0 && e.target.value.startsWith('https://'))
+                }}/>
                 <Button mode={'info'} label={<XIcon height={'12px'} width={'12px'}/>} onClick={handleEditCancelClicked}/>
-                <Button mode={'info'} label={<CheckIcon height={'12px'} width={'12px'}/>} onClick={handleEditOkClicked}/>
+                <Button mode={'info'} disabled={!enabled} label={<CheckIcon height={'12px'} width={'12px'}/>} onClick={handleEditOkClicked}/>
               </>
             )
           } else {
@@ -56,10 +59,12 @@ export default function DiscordWebhookConfig ({ configured, onOk }: DiscordWebho
 
   function handleEditCancelClicked (): void {
     setEditing(false)
+    setWebhookUrl('')
   }
 
   function handleEditOkClicked (): void {
     setEditing(false)
     onOk(webhookUrl)
+    setWebhookUrl('')
   }
 }

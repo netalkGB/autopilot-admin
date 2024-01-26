@@ -21,7 +21,7 @@ export async function updateAccessToken (session: IronSession<SessionInfo>): Pro
   const urlencoded = new URLSearchParams()
   urlencoded.append('grant_type', 'refresh_token')
   urlencoded.append('refresh_token', refreshToken)
-  const refreshTokenRes = await fetch(`${process.env.AP_SERVER_URI}token`, {
+  const refreshTokenRes = await fetch(`${process.env.NEXT_PUBLIC_AP_SERVER_URI}token`, {
     method: 'POST',
     headers: createAccessTokenHeader(),
     body: urlencoded,
@@ -37,5 +37,21 @@ export async function updateAccessToken (session: IronSession<SessionInfo>): Pro
     session.tokens.token.accessToken = refreshTokenJson.access_token
     session.tokens.token.scope = refreshTokenJson.scope
     session.tokens.token.refreshToken = refreshTokenJson.refresh_token
+  }
+}
+
+export async function revokeAccessToken (session: IronSession<SessionInfo>): Promise<void> {
+  const accessToken = session.tokens?.token?.accessToken ?? ''
+
+  const urlencoded = new URLSearchParams()
+  urlencoded.append('token', accessToken)
+  const revokeTokenRes = await fetch(`${process.env.NEXT_PUBLIC_AP_SERVER_URI}revoke`, {
+    method: 'POST',
+    headers: createAccessTokenHeader(),
+    body: urlencoded,
+    redirect: 'follow'
+  })
+  if (revokeTokenRes.status === 200) {
+    session.tokens = undefined
   }
 }

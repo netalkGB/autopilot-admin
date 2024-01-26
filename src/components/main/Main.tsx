@@ -6,7 +6,7 @@ import { type AccountMenuItem } from '@/components/accountmenu/AccountMenu'
 
 interface MainProps {
   appIconSrc: string
-  userName: string
+  userName: React.ReactNode
   accountMenuItems: AccountMenuItem[]
   menuItems: MenuItem[]
   content: React.ReactNode
