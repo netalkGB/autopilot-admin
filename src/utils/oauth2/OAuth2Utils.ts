@@ -39,3 +39,19 @@ export async function updateAccessToken (session: IronSession<SessionInfo>): Pro
     session.tokens.token.refreshToken = refreshTokenJson.refresh_token
   }
 }
+
+export async function revokeAccessToken (session: IronSession<SessionInfo>): Promise<void> {
+  const accessToken = session.tokens?.token?.accessToken ?? ''
+
+  const urlencoded = new URLSearchParams()
+  urlencoded.append('token', accessToken)
+  const revokeTokenRes = await fetch(`${process.env.AP_SERVER_URI}revoke`, {
+    method: 'POST',
+    headers: createAccessTokenHeader(),
+    body: urlencoded,
+    redirect: 'follow'
+  })
+  if (revokeTokenRes.status === 200) {
+    session.tokens = undefined
+  }
+}

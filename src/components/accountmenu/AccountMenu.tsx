@@ -50,7 +50,20 @@ export default function AccountMenu ({ items, userName }: AccountMenuProps): Rea
               {
                 items.map((item: AccountMenuItem, index: number) => {
                   return (
-                    <li className={styles.menuItem} onClick={() => {}} key={index}>
+                    <li className={styles.menuItem} onClick={() => {
+                      if (item.item === 'Logout') {
+                        fetch('/api/logout', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json'
+                          }
+                        }).then(() => {
+                          location.href = '/'
+                        }).catch(() => {
+                          location.href = '/'
+                        })
+                      }
+                    }} key={index}>
                       <div className={styles.menuItemIconArea}><div>{item.icon}</div></div>
                       <div className={styles.menuItemText}>{item.item}</div>
                     </li>
