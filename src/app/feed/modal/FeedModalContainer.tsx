@@ -3,7 +3,7 @@ import { type ForwardedRef, forwardRef, useImperativeHandle, useRef, useState } 
 import type { Schedule } from '@/app/types/Schedule'
 import FeedModal, { type FeedModalChildComponentMethods } from '@/app/feed/modal/FeedModal'
 
-interface FeedModalData {
+export interface FeedModalData {
   title: string
   feed: Schedule | null
 }
@@ -14,9 +14,9 @@ export interface FeedModalContainerChildComponentMethods {
 }
 
 interface FeedModalContainerProps {
-  onClose: (data: FeedModalData) => void
-  onOk: (data: FeedModalData) => void
-  onCancel: (data: FeedModalData) => void
+  onClose: (originalModalData: FeedModalData, updatedData: FeedModalData) => void
+  onOk: (originalModalData: FeedModalData, updatedData: FeedModalData) => void
+  onCancel: (originalModalData: FeedModalData, updatedData: FeedModalData) => void
 }
 
 const FeedModalContainer = forwardRef((props: FeedModalContainerProps, ref: ForwardedRef<FeedModalContainerChildComponentMethods>) => {
@@ -39,16 +39,23 @@ const FeedModalContainer = forwardRef((props: FeedModalContainerProps, ref: Forw
     close
   }))
 
-  function createData (): FeedModalData {
+  function createUpdatedData (): FeedModalData {
     return {
       title,
       feed: childModalRef.current?.getForm() ?? null
     }
   }
 
+  function createOriginalData (): FeedModalData {
+    return {
+      title,
+      feed
+    }
+  }
+
   return (
-    <Modal ref={modalRef} onClose={() => { props.onClose(createData()) }} title={title}>
-      <FeedModal ref={childModalRef} activeFeed={feed} onOk={(feed: Schedule | null) => { props.onOk(createData()) }} onCancel={(feed: Schedule | null) => { props.onCancel(createData()) }} ></FeedModal>
+    <Modal ref={modalRef} onClose={() => { props.onClose(createOriginalData(), createUpdatedData()) }} title={title}>
+      <FeedModal ref={childModalRef} activeFeed={feed} onOk={(feed: Schedule | null) => { props.onOk(createOriginalData(), createUpdatedData()) }} onCancel={(feed: Schedule | null) => { props.onCancel(createOriginalData(), createUpdatedData()) }} ></FeedModal>
     </Modal>
   )
 })

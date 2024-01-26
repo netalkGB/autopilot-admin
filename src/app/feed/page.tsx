@@ -6,8 +6,11 @@ import PlusIcon from '@/components/icon/PlusIcon'
 import styles from './page.module.css'
 import XIcon from '@/components/icon/XIcon'
 import RotateIcon from '@/components/icon/RotateIcon'
-import { useEffect, useRef, useState } from 'react'
-import FeedModalContainer, { type FeedModalContainerChildComponentMethods } from '@/app/feed/modal/FeedModalContainer'
+import { type RefObject, useEffect, useRef, useState } from 'react'
+import FeedModalContainer, {
+  type FeedModalContainerChildComponentMethods,
+  type FeedModalData
+} from '@/app/feed/modal/FeedModalContainer'
 import MessageDialog, {
   type MessageDialogButton,
   type MessageDialogChildComponentMethods
@@ -19,6 +22,7 @@ import type { Schedule as ScheduleUi } from '@/app/types/Schedule'
 export default function Page (): React.ReactNode {
   const modalRef = useRef<FeedModalContainerChildComponentMethods>(null)
   const errorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
+  const editingConfirmDialogRef = useRef<MessageDialogChildComponentMethods>(null)
   const loadingRef = useRef<MessageDialogChildComponentMethods>(null)
 
   const [schedules, setSchedules] = useState<ScheduleUi[]>([])
@@ -122,13 +126,42 @@ export default function Page (): React.ReactNode {
           </table>
         </div>
       </div>
-      <FeedModalContainer onClose={ (data) => { console.log(data); modalRef.current?.close() } } onOk={ (data) => { console.log(data); modalRef.current?.close() } } onCancel={ (data) => { console.log(data); modalRef.current?.close() } } ref={modalRef} />
+      <FeedModalContainer onClose={ (originalData: FeedModalData, updatedData: FeedModalData) => { console.log(updatedData); console.log(originalData); modalRef.current?.close() } } onOk={ (originalData: FeedModalData, updatedData: FeedModalData) => { onModalOk(originalData, updatedData) } } onCancel={ (originalData: FeedModalData, updatedData: FeedModalData) => { console.log(updatedData); console.log(originalData); modalRef.current?.close() } } ref={modalRef} />
 
       <MessageDialog ref={errorDialogRef} message={'Error'} type={'alert'}
                      onButtonClick={(button: MessageDialogButton) => {
                        errorDialogRef.current?.close()
                      }}/>
+      <MessageDialog ref={editingConfirmDialogRef} message={'Your current input will be discarded. Are you sure you want to proceed?'} type={'confirm'}
+                     onButtonClick={(button: MessageDialogButton) => {
+                       editingConfirmDialogRef.current?.close()
+                     }}/>
       <Loading ref={loadingRef}/>
     </>
   )
+  function onModalOk (originalData: FeedModalData | null, updatedData: FeedModalData): void {
+    if (checkUpdate(originalData?.feed ?? null, updatedData.feed)) {
+      console.log('updated')
+    } else {
+      console.log('not updated')
+    }
+    modalRef.current?.close()
+  }
+
+}
+
+function checkUpdate (org: ScheduleUi | null, updated: ScheduleUi | null): boolean {
+  if (org === null) {
+    return true
+  }
+  if (org.name !== updated?.name) {
+    return true
+  }
+  if (org.url !== updated?.url) {
+    return true
+  }
+  if (org.schedule !== updated?.schedule) {
+    return true
+  }
+  return false
 }
