@@ -6,7 +6,7 @@ import PlusIcon from '@/components/icon/PlusIcon'
 import styles from './page.module.css'
 import XIcon from '@/components/icon/XIcon'
 import RotateIcon from '@/components/icon/RotateIcon'
-import { type RefObject, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import FeedModalContainer, {
   type FeedModalContainerChildComponentMethods,
   type FeedModalData
@@ -126,32 +126,101 @@ export default function Page (): React.ReactNode {
           </table>
         </div>
       </div>
-      <FeedModalContainer onClose={ (originalData: FeedModalData, updatedData: FeedModalData) => { console.log(updatedData); console.log(originalData); modalRef.current?.close() } } onOk={ (originalData: FeedModalData, updatedData: FeedModalData) => { onModalOk(originalData, updatedData) } } onCancel={ (originalData: FeedModalData, updatedData: FeedModalData) => { console.log(updatedData); console.log(originalData); modalRef.current?.close() } } ref={modalRef} />
+      <FeedModalContainer onClose={ onModalClose } onOk={ onModalOk } onCancel={ onModalCancel } ref={modalRef} />
 
       <MessageDialog ref={errorDialogRef} message={'Error'} type={'alert'}
                      onButtonClick={(button: MessageDialogButton) => {
                        errorDialogRef.current?.close()
                      }}/>
-      <MessageDialog ref={editingConfirmDialogRef} message={'Your current input will be discarded. Are you sure you want to proceed?'} type={'confirm'}
+      <MessageDialog ref={editingConfirmDialogRef} message={<>Your current input will be discarded.<br />Are you sure you want to proceed?</>} type={'confirm'}
                      onButtonClick={(button: MessageDialogButton) => {
-                       editingConfirmDialogRef.current?.close()
+                       if (button === 'ok') {
+                         modalRef.current?.close()
+                         editingConfirmDialogRef.current?.close()
+                       } else {
+                         editingConfirmDialogRef.current?.close()
+                       }
                      }}/>
       <Loading ref={loadingRef}/>
     </>
   )
   function onModalOk (originalData: FeedModalData | null, updatedData: FeedModalData): void {
-    if (checkUpdate(originalData?.feed ?? null, updatedData.feed)) {
-      console.log('updated')
-    } else {
-      console.log('not updated')
+    if (!checkUpdate(originalData?.feed ?? null, updatedData.feed)) {
+      modalRef.current?.close()
+      return
     }
     modalRef.current?.close()
+
+    update().catch((e) => { errorDialogRef.current?.open() }).finally(() => { loadingRef.current?.close() })
+
+    async function update (): Promise<void> {
+      // extend request
+      const extendResponse = await fetch('/api/extend', {
+        method: 'POST',
+        headers: {}
+      })
+      if (extendResponse.status === 401) {
+        location.href = '/api/login'
+        return
+      }
+      if (!extendResponse.ok) {
+        throw new Error('API error')
+      }
+      const isNew = originalData?.feed === null
+      if (isNew) {
+        // do post
+        const response = await fetch('/api/autopilot/schedule', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedData.feed)
+        })
+        if (!response.ok) {
+          throw new Error('API error')
+        }
+      } else {
+        // do put
+        const response = await fetch('/api/autopilot/schedule', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedData.feed)
+        })
+        if (!response.ok) {
+          throw new Error('API error')
+        }
+      }
+
+      await init()
+    }
+  }
+  function onModalClose (originalData: FeedModalData | null, updatedData: FeedModalData): void {
+    onModalCancel(originalData, updatedData)
+  }
+
+  function onModalCancel (originalData: FeedModalData | null, updatedData: FeedModalData): void {
+    if (checkUpdate(originalData?.feed ?? null, updatedData.feed)) {
+      editingConfirmDialogRef.current?.open()
+    } else {
+      modalRef.current?.close()
+    }
   }
 }
 
 function checkUpdate (org: ScheduleUi | null, updated: ScheduleUi | null): boolean {
   if (org === null) {
-    return true
+    if (updated?.name !== '') {
+      return true
+    }
+    if (updated?.url !== '') {
+      return true
+    }
+    if (updated?.schedule !== 'every30minutes') {
+      return true
+    }
+    return false
   }
   if (org.name !== updated?.name) {
     return true
