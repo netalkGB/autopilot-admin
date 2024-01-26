@@ -4,7 +4,7 @@ module.exports = {
     return [
       {
         source: '/api/autopilot/:path*',
-        destination: process.env.AP_SERVER_URI + ':path*' // Proxy to Backend
+        destination: process.env.NEXT_PUBLIC_AP_SERVER_URI + ':path*' // Proxy to Backend
       },
     ]
   },

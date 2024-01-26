@@ -35,5 +35,5 @@ async function generateAuthorizationRequestUrl (clientId: string, state: string,
   params.append('state', state)
   params.append('code_challenge_method', 's256')
   params.append('code_challenge', codeChallenge)
-  return `${process.env.AP_SERVER_URI}authorize?${params.toString()}`
+  return `${process.env.NEXT_PUBLIC_AP_SERVER_URI}authorize?${params.toString()}`
 }

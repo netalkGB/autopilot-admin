@@ -21,7 +21,7 @@ export async function updateAccessToken (session: IronSession<SessionInfo>): Pro
   const urlencoded = new URLSearchParams()
   urlencoded.append('grant_type', 'refresh_token')
   urlencoded.append('refresh_token', refreshToken)
-  const refreshTokenRes = await fetch(`${process.env.AP_SERVER_URI}token`, {
+  const refreshTokenRes = await fetch(`${process.env.NEXT_PUBLIC_AP_SERVER_URI}token`, {
     method: 'POST',
     headers: createAccessTokenHeader(),
     body: urlencoded,
@@ -45,7 +45,7 @@ export async function revokeAccessToken (session: IronSession<SessionInfo>): Pro
 
   const urlencoded = new URLSearchParams()
   urlencoded.append('token', accessToken)
-  const revokeTokenRes = await fetch(`${process.env.AP_SERVER_URI}revoke`, {
+  const revokeTokenRes = await fetch(`${process.env.NEXT_PUBLIC_AP_SERVER_URI}revoke`, {
     method: 'POST',
     headers: createAccessTokenHeader(),
     body: urlencoded,

@@ -52,15 +52,19 @@ export default function AccountMenu ({ items, userName }: AccountMenuProps): Rea
                   return (
                     <li className={styles.menuItem} onClick={() => {
                       if (item.item === 'Logout') {
+                        const urlParams = new URLSearchParams()
+                        urlParams.append('to', location.href)
+                        const apServerLogout = (process.env.NEXT_PUBLIC_AP_SERVER_URI ?? '') + 'logout?' + urlParams.toString()
+
                         fetch('/api/logout', {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json'
                           }
                         }).then(() => {
-                          location.href = '/'
+                          location.href = apServerLogout
                         }).catch(() => {
-                          location.href = '/'
+                          location.href = apServerLogout
                         })
                       }
                     }} key={index}>

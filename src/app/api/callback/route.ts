@@ -56,7 +56,7 @@ export async function GET (request: Request): Promise<NextResponse> {
   const payload: { iss: string, sub: string, aud: string, iat: number, exp: number } = JSON.parse(Buffer.from(b64UrlToB64(parts[1] as string), 'base64').toString())
   // @ts-expect-error jws
   if ((jose.jws.JWS.verify(token.id_token, publicKey as RSAKey, [clientRsaKey.alg])) === true) {
-    if (payload.iss === process.env.AP_SERVER_URI) {
+    if (payload.iss === process.env.NEXT_PUBLIC_AP_SERVER_URI) {
       if (payload.aud === clientId || payload?.aud?.includes(clientId)) {
         const now = Math.floor(Date.now() / 1000)
         if (payload.iat <= now && payload.exp >= now) {
@@ -91,7 +91,7 @@ async function accessTokenRequest (clientId: string, clientSecret: string, code:
   // params.append('client_secret', clientSecret)
   params.append('redirect_uri', process.env.AP_REDIRECT_URI ?? '')
   params.append('code_verifier', codeVerifier)
-  const response = await fetch(`${process.env.AP_SERVER_URI}token`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_AP_SERVER_URI}token`, {
     method: 'POST',
     headers,
     body: params
