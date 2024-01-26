@@ -23,6 +23,7 @@ export default function Page (): React.ReactNode {
   const modalRef = useRef<FeedModalContainerChildComponentMethods>(null)
   const errorDialogRef = useRef<MessageDialogChildComponentMethods>(null)
   const editingConfirmDialogRef = useRef<MessageDialogChildComponentMethods>(null)
+  const deleteConfirmDialogRef = useRef<MessageDialogChildComponentMethods>(null)
   const loadingRef = useRef<MessageDialogChildComponentMethods>(null)
 
   const [schedules, setSchedules] = useState<ScheduleUi[]>([])
@@ -109,16 +110,20 @@ export default function Page (): React.ReactNode {
             {
               schedules.map((feed, index) => {
                 return (
-                  <tr key={index}>
+                  <tr key={feed.id}>
                     <td><a href='#' onClick={onOpenDialog}>{feed.name}</a></td>
                     <td>{feed.url}</td>
                     <td>{feed.schedule === 'every30minutes' ? '30m' : '1h'}</td>
-                    <td><a href='#' className={styles.delete}><XIcon width={'14px'} height={'14px'}/>Delete</a></td>
+                    <td><a href='#' onClick={onDelete} className={styles.delete}><XIcon width={'14px'} height={'14px'}/>Delete</a></td>
                   </tr>
                 )
                 function onOpenDialog (e: React.MouseEvent<HTMLAnchorElement>): void {
                   e.preventDefault()
                   modalRef.current?.open({ title: 'Edit Schedule', feed })
+                }
+                function onDelete (e: React.MouseEvent<HTMLAnchorElement>): void {
+                  e.preventDefault()
+                  deleteConfirmDialogRef.current?.open(feed)
                 }
               })
             }
@@ -139,6 +144,21 @@ export default function Page (): React.ReactNode {
                          editingConfirmDialogRef.current?.close()
                        } else {
                          editingConfirmDialogRef.current?.close()
+                       }
+                     }}/>
+      <MessageDialog ref={deleteConfirmDialogRef} message={<>Are you sure?</>} type={'confirm'}
+                     onButtonClick={(button: MessageDialogButton, data) => {
+                       if (button === 'ok') {
+                         const feedUi = data as ScheduleUi
+                         deleteFeedItem(feedUi).catch((e) => {
+                           console.log(e)
+                           errorDialogRef.current?.open()
+                         }).finally(() => {
+                           loadingRef.current?.close()
+                           deleteConfirmDialogRef.current?.close()
+                         })
+                       } else {
+                         deleteConfirmDialogRef.current?.close()
                        }
                      }}/>
       <Loading ref={loadingRef}/>
@@ -206,6 +226,34 @@ export default function Page (): React.ReactNode {
     } else {
       modalRef.current?.close()
     }
+  }
+
+  async function deleteFeedItem (feed: ScheduleUi): Promise<void> {
+    loadingRef.current?.open()
+    // delete request
+    const extendResponse = await fetch('/api/extend', {
+      method: 'POST',
+      headers: {}
+    })
+    if (extendResponse.status === 401) {
+      location.href = '/api/login'
+      return
+    }
+    if (!extendResponse.ok) {
+      throw new Error('API error')
+    }
+    const params = new URLSearchParams()
+    params.append('id', feed.id ?? '')
+    const response = await fetch(`/api/autopilot/schedule?${params.toString()}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    if (!response.ok) {
+      throw new Error('API error')
+    }
+    await init()
   }
 }
 

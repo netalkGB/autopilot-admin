@@ -9,19 +9,24 @@ export type MessageDialogType = 'confirm' | 'alert'
 export type MessageDialogButton = 'ok' | 'cancel'
 
 export interface MessageDialogChildComponentMethods {
-  open: () => void
+  open: (data?: any) => void
   close: () => void
 }
 
 interface MessageDialogProps {
   type?: MessageDialogType
   message: React.ReactNode
-  onButtonClick: (button: MessageDialogButton) => void
+  data?: any
+  onButtonClick: (button: MessageDialogButton, data?: any) => void
 }
 
 const MessageDialog = forwardRef((props: MessageDialogProps, ref: ForwardedRef<MessageDialogChildComponentMethods>) => {
   const [isOpen, setIsOpen] = React.useState(false)
-  const open = (): void => {
+  const [data, setData] = React.useState<any>(props)
+  const open = (data = undefined): void => {
+    if (data !== undefined) {
+      setData(data)
+    }
     setIsOpen(true)
   }
 
@@ -33,10 +38,10 @@ const MessageDialog = forwardRef((props: MessageDialogProps, ref: ForwardedRef<M
     open,
     close
   }))
-  return isOpen ? MessageDialogComponent(props) : (<></>)
+  return isOpen ? MessageDialogComponent({ ...props, data }) : (<></>)
 })
 
-function MessageDialogComponent ({ message, type = 'alert', onButtonClick }: MessageDialogProps): React.ReactNode {
+function MessageDialogComponent ({ message, type = 'alert', onButtonClick, data = undefined }: MessageDialogProps): React.ReactNode {
   return (
     <div>
       <BaseDialog onClickOutside={() => {}}>
@@ -45,34 +50,34 @@ function MessageDialogComponent ({ message, type = 'alert', onButtonClick }: Mes
             {message}
           </div>
           <div className={styles.buttonAreaContainer}>
-            {createButtonArea(type)}
+            {createButtonArea(type, data)}
           </div>
         </div>
       </BaseDialog>
     </div>
   )
 
-  function createButtonArea (type?: MessageDialogType): React.ReactNode {
+  function createButtonArea (type?: MessageDialogType, data?: any): React.ReactNode {
     if (type === 'confirm') {
       return (
         <div className={styles.buttonArea}>
-          <div><Button mode={'info'} label={'OK'} fontSize={'12px'} onClick={() => { handleButtonClick('ok') }}/></div>
-          <div><Button mode={'info'} label={'Cancel'} fontSize={'12px'} onClick={() => { handleButtonClick('cancel') }}/></div>
+          <div><Button mode={'info'} label={'OK'} fontSize={'12px'} onClick={() => { handleButtonClick('ok', data) }}/></div>
+          <div><Button mode={'info'} label={'Cancel'} fontSize={'12px'} onClick={() => { handleButtonClick('cancel', data) }}/></div>
         </div>
       )
     } else {
       return (
         <div>
           <Button mode={'info'} label={'OK'} fontSize={'12px'} onClick={() => {
-            handleButtonClick('ok')
+            handleButtonClick('ok', data)
           }}/>
         </div>
       )
     }
   }
 
-  function handleButtonClick (button: MessageDialogButton): void {
-    onButtonClick(button)
+  function handleButtonClick (button: MessageDialogButton, data: any): void {
+    onButtonClick(button, data)
   }
 }
 
