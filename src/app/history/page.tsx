@@ -56,9 +56,12 @@ export default function Page (): React.ReactNode {
       throw new Error('API error')
     }
     const schedules = await scheduleResponse.json() as Schedule[]
-    const histories = await historyResponse.json() as History2[]
+    const histories = (await historyResponse.json() as History2[]).map((h: History2) => ({
+      ...h,
+      date: new Date(h.date)
+    }))
 
-    const reverseHistories = histories.reverse()
+    const sortedHistories = histories.sort((a: History2, b: History2) => b.date.getTime() - a.date.getTime())
 
     let uiHistories: History[] = []
 
@@ -66,7 +69,7 @@ export default function Page (): React.ReactNode {
     schedules.forEach((schedule) => {
       nameMap.set(schedule.id, schedule.name)
     })
-    reverseHistories.forEach((history) => {
+    sortedHistories.forEach((history) => {
       const name = nameMap.get(history.scheduleId) ?? history.scheduleId
       uiHistories = [...uiHistories, {
         name,
@@ -82,6 +85,7 @@ export default function Page (): React.ReactNode {
     init().then(() => {
       loadingRef.current?.close()
     }).catch((e) => {
+      console.log(e)
       loadingRef.current?.close()
       errorDialogRef.current?.open()
     })
@@ -123,7 +127,7 @@ export default function Page (): React.ReactNode {
                 return (
                   <tr key={index}>
                     <td>{history.name}</td>
-                    <td>{history.date.toString()}</td>
+                    <td>{history.date.toISOString()}</td>
                     <td><span className={history.result === 'success' ? styles.success : styles.failed}>{history.result === 'success' ? 'Success' : 'Failed'}</span></td>
                   </tr>
                 )

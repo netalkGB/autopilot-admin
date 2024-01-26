@@ -11,7 +11,7 @@ import MessageDialog, {
 } from '@/components/modal/MessageDialog'
 import type { Schedule } from '@/api/types/Schedule'
 import Loading from '@/components/modal/Loading'
-import type { History } from '@/api/types/History'
+import type { History as History2, History } from '@/api/types/History'
 import type Status from '@/app/types/Status'
 
 export default function Home (): React.ReactNode {
@@ -58,14 +58,17 @@ export default function Home (): React.ReactNode {
       throw new Error('API error')
     }
     const schedules = await scheduleResponse.json() as Schedule[]
-    const histories = await historyResponse.json() as History[]
+    const histories = (await historyResponse.json() as History[]).map((h: History2) => ({
+      ...h,
+      date: new Date(h.date)
+    }))
 
-    const reverseHistories = histories.reverse()
+    const sortedHistories = histories.sort((a: History2, b: History2) => b.date.getTime() - a.date.getTime())
 
     let statuses: Status[] = []
 
     for (const schedule of schedules) {
-      const history = reverseHistories.find((history) => history.scheduleId === schedule.id)
+      const history = sortedHistories.find((history) => history.scheduleId === schedule.id)
       if (history === undefined) continue
       const status: Status = {
         name: schedule.name,
@@ -124,7 +127,7 @@ export default function Home (): React.ReactNode {
               return (
                 <tr key={index}>
                   <td>{status.name}</td>
-                  <td>{status.date.toString()}</td>
+                  <td>{status.date.toISOString()}</td>
                   <td>{status.result === 'success'
                     ? <span className={styles.success}>Success</span>
                     : <span className={styles.failed}>Failed</span>}</td>
