@@ -15,7 +15,7 @@ export interface MessageDialogChildComponentMethods {
 
 interface MessageDialogProps {
   type?: MessageDialogType
-  message: string
+  message: React.ReactNode
   onButtonClick: (button: MessageDialogButton) => void
 }
 
